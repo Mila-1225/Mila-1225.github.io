@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mila | Cybersecurity Portfolio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --terminal-bg: #1e293b;
+            --terminal-text: #f1f5f9;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        /* Terminal styles */
+        .terminal-window {
+            background: var(--terminal-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .terminal-header {
+            background: #0f172a;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+            margin-right: 15px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .terminal-title {
+            color: #94a3b8;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .terminal-body {
+            padding: 20px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: var(--terminal-text);
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .terminal-line {
+            margin-bottom: 10px;
+        }
+        
+        .prompt {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .directory {
+            color: #60a5fa;
+        }
+        
+        .command {
+            color: var(--terminal-text);
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background-color: var(--secondary);
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+        
+        .game-canvas-container {
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        
+        /* Snake Game Canvas */
+        #snake-canvas {
+            display: block;
+            background-color: #020617;
+        }
+        
+        /* Floating animation for images */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Skill card styling */
+        .skill-card {
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .skill-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Project card styling */
+        .project-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Remove bullet points from lists */
+        .no-bullets {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .no-bullets li {
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .no-bullets li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .terminal-body {
+                font-size: 0.85rem;
+                padding: 15px;
+            }
+        }
+        
+        /* Section spacing */
+        .section-container {
+            padding: 80px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            color: #94a3b8;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full backdrop-blur-md bg-gray-900/80 z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                    <span class="font-bold text-white">M</span>
+                </div>
+                <h1 class="text-2xl font-bold">
+                    Mila<span class="text-blue-400">.</span>
+                </h1>
+            </div>
+
+            <!-- Menu -->
+            <ul class="flex gap-6 text-lg">
+                <li><a href="#home" class="hover:text-blue-400 transition duration-300">Home</a></li>
+                <li><a href="#about" class="hover:text-blue-400 transition duration-300">About</a></li>
+                <li><a href="#skills" class="hover:text-blue-400 transition duration-300">Skills</a></li>
+                <li><a href="#certifications" class="hover:text-blue-400 transition duration-300">Certifications</a></li>
+                <li><a href="#projects" class="hover:text-blue-400 transition duration-300">Projects</a></li>
+                <li><a href="#internships" class="hover:text-blue-400 transition duration-300">Internships</a></li>
+                <li><a href="#terminal" class="hover:text-blue-400 transition duration-300">Terminal</a></li>
+                <li><a href="#contact" class="hover:text-blue-400 transition duration-300">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ==================== HOME SECTION ==================== -->
+    <section id="home" class="min-h-screen flex items-center justify-center px-6 pt-20 pb-32 relative overflow-hidden">
+        <!-- Background gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-blue-900/20"></div>
+        
+        <div class="container max-w-6xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                <!-- Text content -->
+                <div class="md:w-1/2 text-center md:text-left">
+                    <h2 class="text-5xl md:text-6xl font-bold mb-6">
+                        Cybersecurity 
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                            Professional
+                        </span>
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-8 max-w-xl">
+                        Passionate about security, development, and creating solutions that make a difference.
+                        Exploring the intersection of cybersecurity, programming, and ethical hacking.
+                    </p>
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                        <a href="#resume" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition duration-300">
+                            Download Resume
+                        </a>
+                        <a href="#projects" class="px-6 py-3 border border-blue-500 text-blue-400 hover:bg-blue-500/10 rounded-lg font-semibold transition duration-300">
+                            View Projects
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Profile Image -->
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <div class="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-blue-500 shadow-2xl floating">
+                            <img src="mila.png"
+                                 alt="Mila" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            #CyberSec
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ABOUT SECTION ==================== -->
+    <section id="about" class="section-container bg-gradient-to-b from-gray-900 to-gray-950">
+        <div class="container max-w-4xl mx-auto">
+            <h2 class="section-title">
+                About <span class="text-blue-400">Me</span>
+            </h2>
+            <p class="section-subtitle">
+                A passionate cybersecurity student dedicated to building secure systems and protecting digital assets
+            </p>
+            
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/3">
+                    <div class="w-72 h-72 rounded-xl overflow-hidden border-4 border-blue-500 shadow-2xl mx-auto">
+                        <img src="milla.png" alt="Mila" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                
+                <div class="lg:w-2/3 space-y-6 text-lg text-gray-300">
+                    <p>
+                        I am a dedicated cybersecurity student with a strong focus on network security, 
+                        ethical hacking, digital forensics, and secure software development. My journey 
+                        in cybersecurity began with a curiosity about how systems work and how to protect 
+                        them from malicious threats.
+                    </p>
+                    
+                    <p>
+                        My technical expertise spans across penetration testing, vulnerability assessment, 
+                        cryptography, and security tool automation. I believe in continuous learning and 
+                        staying updated with the latest security trends and technologies.
+                    </p>
+                    
+                    <p>
+                        When I'm not analyzing security vulnerabilities or building secure applications, 
+                        I enjoy contributing to open-source projects, writing technical blogs, and 
+                        participating in cybersecurity competitions.
+                    </p>
+                    
+                    <div class="pt-6">
+                        <h4 class="text-xl font-bold mb-4 text-blue-400">My Mission</h4>
+                        <p>
+                            To contribute to a safer digital world by developing robust security solutions 
+                            and sharing knowledge with the cybersecurity community.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SKILLS SECTION ==================== -->
+    <section id="skills" class="section-container bg-gray-900">
+        <div class="container max-w-6xl mx-auto">
+            <h2 class="section-title">
+                Technical <span class="text-blue-400">Skills</span>
+            </h2>
+            <p class="section-subtitle">
+                A comprehensive overview of my technical abilities across multiple domains
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Languages -->
+                <div class="skill-card bg-gray-800/50 p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                            <span class="text-blue-400 text-xl">{ }</span>
+                        </div>
+                        <h3 class="text-2xl font-bold">Programming Languages</h3>
+                    </div>
+                    <ul class="no-bullets space-y-3">
+                        <li>Python</li><li>C/C++</li><li>HTML/CSS</li><li>JavaScript</li><li>Ruby</li>
+                        <li>Go</li><li>Rust</li><li>SQL</li><li>Bash/Shell</li><li>PowerShell</li>
+                    </ul>
+                </div>
+                
+                <!-- Cybersecurity -->
+                <div class="skill-card bg-gray-800/50 p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <span class="text-green-400 text-xl">🛡</span>
+                        </div>
+                        <h3 class="text-2xl font-bold">Cybersecurity Domains</h3>
+                    </div>
+                    <ul class="no-bullets space-y-3">
+                        <li>Network Security</li><li>Penetration Testing</li><li>Vulnerability Assessment</li>
+                        <li>Cryptography</li><li>Security Tools (Burp, Wireshark, Nmap)</li>
+                        <li>Firewall Configuration</li><li>Incident Response</li><li>Risk Assessment</li>
+                        <li>Web Application Security</li><li>Digital Forensics</li>
+                    </ul>
+                </div>
+                
+                <!-- Tools & Technologies -->
+                <div class="skill-card bg-gray-800/50 p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                            <span class="text-purple-400 text-xl">⚙</span>
+                        </div>
+                        <h3 class="text-2xl font-bold">Tools & Technologies</h3>
+                    </div>
+                    <ul class="no-bullets space-y-3">
+                        <li>Linux/Unix Systems</li><li>Git & Version Control</li><li>Docker</li>
+                        <li>Metasploit Framework</li><li>Kali Linux</li><li>Wireshark</li>
+                        <li>Burp Suite</li><li>Nmap</li><li>Virtualization (VMware, VirtualBox)</li>
+                        <li>Cloud Platforms (AWS, Azure basics)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Soft Skills -->
+            <div class="mt-12">
+                <h3 class="text-3xl font-bold mb-8 text-center">Soft <span class="text-blue-400">Skills</span></h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-xl text-center">
+                        <div class="text-2xl mb-2">🤝</div>
+                        <h4 class="font-bold mb-2">Team Collaboration</h4>
+                        <p class="text-gray-400 text-sm">Working effectively in team environments</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-xl text-center">
+                        <div class="text-2xl mb-2">💡</div>
+                        <h4 class="font-bold mb-2">Problem Solving</h4>
+                        <p class="text-gray-400 text-sm">Analytical thinking and solution design</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-xl text-center">
+                        <div class="text-2xl mb-2">📝</div>
+                        <h4 class="font-bold mb-2">Technical Documentation</h4>
+                        <p class="text-gray-400 text-sm">Clear documentation of processes and findings</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-xl text-center">
+                        <div class="text-2xl mb-2">🗣️</div>
+                        <h4 class="font-bold mb-2">Communication</h4>
+                        <p class="text-gray-400 text-sm">Clear articulation of technical concepts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CERTIFICATIONS SECTION ==================== -->
+    <section id="certifications" class="section-container bg-gradient-to-b from-gray-900 to-gray-950">
+        <div class="container max-w-6xl mx-auto">
+            <h2 class="section-title">
+                Certifications <span class="text-blue-400">&</span> Training
+            </h2>
+            <p class="section-subtitle">
+                Industry-recognized certifications and ongoing learning initiatives
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Google Cybersecurity Certificate -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🔐</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-400">Google Cybersecurity Certificate</h3>
+                            <p class="text-gray-400 text-sm">Completed in 2024</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        Comprehensive foundation in cybersecurity principles, tools, and best practices
+                    </p>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>• Security fundamentals and concepts</li>
+                        <li>• Network security basics</li>
+                        <li>• Incident response procedures</li>
+                    </ul>
+                </div>
+                
+                <!-- CEH (Learning) -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-green-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-green-400">EC-Council CEH</h3>
+                            <p class="text-gray-400 text-sm">Currently Learning (70% Complete)</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        Ethical Hacking and Penetration Testing methodologies and tools
+                    </p>
+                    <div class="mb-4">
+                        <div class="w-full bg-gray-700 rounded-full h-2.5">
+                            <div class="bg-green-500 h-2.5 rounded-full" style="width: 70%"></div>
+                        </div>
+                        <div class="text-right text-sm text-gray-400 mt-1">70% Complete</div>
+                    </div>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>• Footprinting and reconnaissance</li>
+                        <li>• Scanning networks and enumeration</li>
+                        <li>• System hacking techniques</li>
+                    </ul>
+                </div>
+                
+                <!-- Cisco Networking -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🌐</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-purple-400">Cisco Networking Basics</h3>
+                            <p class="text-gray-400 text-sm">Completed in 2023</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">
+                        Fundamental networking concepts and Cisco device configuration
+                    </p>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>• Network infrastructure basics</li>
+                        <li>• Cisco IOS fundamentals</li>
+                        <li>• Basic network troubleshooting</li>
+                        <li>• Network security principles</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Additional Training -->
+            <div class="mt-12 bg-gray-800/50 rounded-2xl p-8 border border-gray-700">
+                <h3 class="text-2xl font-bold mb-6 text-center">Additional <span class="text-blue-400">Training</span></h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">📚</div>
+                        <h4 class="font-bold mb-2">TryHackMe</h4>
+                        <p class="text-gray-400 text-sm">Active learner with 50+ rooms completed</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">🎮</div>
+                        <h4 class="font-bold mb-2">HackTheBox</h4>
+                        <p class="text-gray-400 text-sm">Regular CTF and challenge participation</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div class="text-3xl mb-3">📖</div>
+                        <h4 class="font-bold mb-2">Self-Study</h4>
+                        <p class="text-gray-400 text-sm">Continuous learning through books and online resources</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PROJECTS SECTION ==================== -->
+    <section id="projects" class="section-container bg-gray-900">
+        <div class="container max-w-6xl mx-auto">
+            <h2 class="section-title">
+                Featured <span class="text-blue-400">Projects</span>
+            </h2>
+            <p class="section-subtitle">
+                Hands-on projects demonstrating cybersecurity and development skills
+            </p>
+            
+            <div class="space-y-12">
+                <!-- Project 1 -->
+                <div class="project-card p-8 rounded-2xl">
+                    <div class="flex flex-col lg:flex-row gap-8 items-start">
+                        <div class="lg:w-1/3">
+                            <div class="w-full h-48 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-4xl font-bold">JS</span>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3">
+                            <h3 class="text-2xl font-bold mb-3">Jewellery Accounting Software</h3>
+                            <p class="text-gray-300 mb-6">
+                                A comprehensive Flask-based web application designed for jewellery business management. 
+                                Features include purchase/sales tracking, inventory management, customer database, 
+                                and automated financial reporting.
+                            </p>
+                            <div class="mb-6">
+                                <h4 class="font-bold mb-2 text-blue-400">Key Features:</h4>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300">
+                                    <li>• Secure user authentication</li>
+                                    <li>• Real-time inventory tracking</li>
+                                    <li>• Automated sales reports</li>
+                                    <li>• Customer relationship management</li>
+                                    <li>• Data backup and recovery</li>
+                                    <li>• Role-based access control</li>
+                                </ul>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Python</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Flask</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">SQLite</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">HTML/CSS</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">JavaScript</span>
+                            </div>
+                            <div class="flex gap-4 mt-6">
+                                <a href="https://github.com/Demonjokerwarrior/jewellary-accounting-software" 
+                                   target="_blank" 
+                                   class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition duration-300">
+                                    View on GitHub
+                                </a>
+                                <button onclick="openVideo('assets/videos/project1.mp4')" 
+                                        class="px-6 py-3 border border-blue-500 text-blue-400 hover:bg-blue-500/10 rounded-lg font-semibold transition duration-300">
+                                    Live Demo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="project-card p-8 rounded-2xl">
+                    <div class="flex flex-col lg:flex-row gap-8 items-start">
+                        <div class="lg:w-1/3">
+                            <div class="w-full h-48 bg-gradient-to-r from-red-600 to-pink-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-4xl font-bold">RB</span>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3">
+                            <h3 class="text-2xl font-bold mb-3">Mila Restaurant Management System</h3>
+                            <p class="text-gray-300 mb-6">
+                                A Ruby-based restaurant management application featuring order processing, 
+                                inventory management, staff scheduling, and customer feedback systems. 
+                                Designed with security and efficiency in mind.
+                            </p>
+                            <div class="mb-6">
+                                <h4 class="font-bold mb-2 text-blue-400">Key Features:</h4>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300">
+                                    <li>• Order tracking system</li>
+                                    <li>• Inventory management</li>
+                                    <li>• Staff scheduling interface</li>
+                                    <li>• Customer feedback module</li>
+                                    <li>• Sales analytics dashboard</li>
+                                    <li>• Secure payment processing</li>
+                                </ul>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Ruby</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Rails</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">PostgreSQL</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Bootstrap</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">JavaScript</span>
+                            </div>
+                            <div class="flex gap-4 mt-6">
+                                <a href="https://github.com/Demonjokerwarrior/jewellary-accounting-software" 
+                                   target="_blank" 
+                                   class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition duration-300">
+                                    View on GitHub
+                                </a>
+                                <button onclick="openVideo('assets/videos/project2.mp4')" 
+                                        class="px-6 py-3 border border-blue-500 text-blue-400 hover:bg-blue-500/10 rounded-lg font-semibold transition duration-300">
+                                    Live Demo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3 -->
+                <div class="project-card p-8 rounded-2xl">
+                    <div class="flex flex-col lg:flex-row gap-8 items-start">
+                        <div class="lg:w-1/3">
+                            <div class="w-full h-48 bg-gradient-to-r from-green-600 to-emerald-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-4xl font-bold">CL</span>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3">
+                            <h3 class="text-2xl font-bold mb-3">Cybersecurity CLI Toolkit</h3>
+                            <p class="text-gray-300 mb-6">
+                                A collection of command-line tools for security analysis, network scanning, 
+                                and vulnerability assessment. Built with Python and designed for security 
+                                professionals and enthusiasts.
+                            </p>
+                            <div class="mb-6">
+                                <h4 class="font-bold mb-2 text-blue-400">Tools Included:</h4>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300">
+                                    <li>• Network port scanner</li>
+                                    <li>• Vulnerability scanner</li>
+                                    <li>• Password strength checker</li>
+                                    <li>• Log analysis tool</li>
+                                    <li>• Encryption/decryption utilities</li>
+                                    <li>• System hardening scripts</li>
+                                </ul>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Python</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Bash</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Security Tools</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">CLI Development</span>
+                                <span class="px-3 py-1 bg-gray-800 rounded-full text-sm">Linux</span>
+                            </div>
+                            <div class="flex gap-4 mt-6">
+                                <button onclick="openVideo('assets/videos/project3.mp4')" 
+                                        class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition duration-300">
+                                    View Demo
+                                </button>
+                                <a href="#" 
+                                   class="px-6 py-3 border border-blue-500 text-blue-400 hover:bg-blue-500/10 rounded-lg font-semibold transition duration-300">
+                                    Coming Soon
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== INTERNSHIPS SECTION ==================== -->
+    <section id="internships" class="section-container bg-gradient-to-b from-gray-900 to-gray-950">
+        <div class="container max-w-6xl mx-auto">
+            <h2 class="section-title">
+                Internship <span class="text-blue-400">Experience</span>
+            </h2>
+            <p class="section-subtitle">
+                Practical industry experience in cybersecurity roles
+            </p>
+            
+            <div class="space-y-8">
+                <!-- Internship 1 -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-blue-400">Cybersecurity Intern</h3>
+                            <h4 class="text-xl text-gray-300 mb-2">TechSecure Labs</h4>
+                            <p class="text-gray-400">June 2023 – August 2023 (3 months)</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <span class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full font-semibold">Full-time</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-300 mb-6">
+                        Gained hands-on experience in enterprise security operations, working alongside 
+                        senior security analysts to monitor, detect, and respond to security incidents.
+                    </p>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-3 text-green-400">Key Responsibilities:</h4>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Performed vulnerability scanning and basic penetration testing on internal systems</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Configured and monitored firewall rules and security policies</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Analyzed SIEM logs for security incidents and anomalies</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Documented security incidents and assisted in creating mitigation plans</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Participated in security awareness training for employees</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Assisted in security policy review and updates</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-3 text-purple-400">Technologies Used:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Nessus</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Splunk</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Wireshark</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Palo Alto Firewalls</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Windows Security</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Linux Security</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Internship 2 -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-green-400">Network Security Intern</h3>
+                            <h4 class="text-xl text-gray-300 mb-2">NetTech Solutions</h4>
+                            <p class="text-gray-400">December 2023 – February 2024 (3 months)</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <span class="px-4 py-2 bg-green-500/20 text-green-400 rounded-full font-semibold">Full-time</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-300 mb-6">
+                        Focused on network security operations, gaining practical experience in network 
+                        hardening, security auditing, and intrusion detection systems.
+                    </p>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-3 text-green-400">Key Responsibilities:</h4>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Assisted with network security audits and compliance checks</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Analyzed network packet captures using Wireshark for security incidents</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Worked with IPS/IDS tools to detect and respond to network anomalies</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Participated in network segmentation and access control implementation</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Assisted in VPN configuration and maintenance</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">✓</span>
+                                <span>Documented network security procedures and best practices</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-3 text-purple-400">Technologies Used:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Cisco IOS</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Wireshark</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Snort</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Nmap</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">OpenVPN</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm">Network Monitoring</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== RESUME SECTION ==================== -->
+    <section id="resume" class="section-container bg-gray-900">
+        <div class="container max-w-4xl mx-auto text-center">
+            <h2 class="section-title">
+                Download <span class="text-blue-400">Resume</span>
+            </h2>
+            <p class="section-subtitle">
+                Get a comprehensive overview of my experience, skills, and qualifications
+            </p>
+            
+            <div class="bg-gray-800/50 rounded-2xl p-8 border border-gray-700 max-w-2xl mx-auto">
+                <div class="text-6xl mb-6">📄</div>
+                <h3 class="text-2xl font-bold mb-4">Mila - Cybersecurity Professional</h3>
+                <p class="text-gray-400 mb-8">
+                    Detailed resume including education, technical skills, certifications, 
+                    projects, and professional experience.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gray-900 p-4 rounded-xl">
+                        <div class="text-2xl mb-2">🎓</div>
+                        <h4 class="font-bold mb-1">Education</h4>
+                        <p class="text-gray-400 text-sm">Cybersecurity Student</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-xl">
+                        <div class="text-2xl mb-2">⚡</div>
+                        <h4 class="font-bold mb-1">Skills</h4>
+                        <p class="text-gray-400 text-sm">15+ Technical Skills</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-xl">
+                        <div class="text-2xl mb-2">🏆</div>
+                        <h4 class="font-bold mb-1">Certifications</h4>
+                        <p class="text-gray-400 text-sm">3+ Certifications</p>
+                    </div>
+                </div>
+                
+                <a href="assets/resume.pdf" download 
+                   class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl text-white text-lg font-semibold transition duration-300">
+                    <span>📥</span>
+                    Download Resume (PDF)
+                </a>
+                
+                <p class="text-gray-500 text-sm mt-4">
+                    Updated: March 2024 | File size: 1.2 MB
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TERMINAL SECTION ==================== -->
+    <section id="terminal" class="section-container bg-gradient-to-b from-gray-900 to-gray-950">
+        <div class="container max-w-6xl mx-auto">
+            <h2 class="section-title">
+                Interactive <span class="text-blue-400">Terminal</span>
+            </h2>
+            <p class="section-subtitle">
+                Try running commands in this simulated terminal. Type commands to explore or run the Snake game!
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Terminal Window -->
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot bg-red-500"></span>
+                            <span class="dot bg-yellow-500"></span>
+                            <span class="dot bg-green-500"></span>
+                        </div>
+                        <div class="terminal-title">bash — mila@portfolio:~/terminal</div>
+                    </div>
+                    
+                    <div class="terminal-body" id="terminal-output">
+                        <div class="terminal-line">
+                            <span class="prompt">mila@portfolio</span>:<span class="directory">~/terminal</span>$ 
+                            <span class="command">whoami</span>
+                        </div>
+                        <div class="text-green-400 mb-4">cybersecurity-student</div>
+                        
+                        <div class="terminal-line">
+                            <span class="prompt">mila@portfolio</span>:<span class="directory">~/terminal</span>$ 
+                            <span class="command">ls -la</span>
+                        </div>
+                        <div class="text-gray-400 mb-4">
+                            <div>drwxr-xr-x  2 mila mila 4096 Jan 10 14:30 <span class="text-blue-300">.</span></div>
+                            <div>drwxr-xr-x 12 mila mila 4096 Jan 10 14:28 <span class="text-blue-300">..</span></div>
+                            <div>-rwxr-xr-x  1 mila mila 1024 Jan 10 14:29 <span class="text-green-300">rungame</span></div>
+                            <div>-rw-r--r--  1 mila mila  512 Jan 10 14:30 <span class="text-gray-300">skills.txt</span></div>
+                        </div>
+                        
+                        <div class="terminal-line">
+                            <span class="prompt">mila@portfolio</span>:<span class="directory">~/terminal</span>$ 
+                            <span class="command">cat skills.txt | head -5</span>
+                        </div>
+                        <div class="text-gray-300 mb-4">
+                            <div>• Python Development</div>
+                            <div>• Network Security</div>
+                            <div>• Penetration Testing</div>
+                            <div>• Web Application Security</div>
+                            <div>• Cryptography Basics</div>
+                        </div>
+                        
+                        <div class="terminal-line">
+                            <span class="prompt">mila@portfolio</span>:<span class="directory">~/terminal</span>$ 
+                            <span id="current-command"></span>
+                            <span class="cursor" id="terminal-cursor"></span>
+                        </div>
+                        
+                        <!-- Input line (hidden initially) -->
+                        <div class="terminal-line hidden" id="command-input-line">
+                            <span class="prompt">mila@portfolio</span>:<span class="directory">~/terminal</span>$ 
+                            <input type="text" id="command-input" class="bg-transparent border-none outline-none text-white w-3/4" autocomplete="off" autofocus>
+                            <span class="cursor"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Game Canvas -->
+                <div>
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold mb-4">Snake Game <span class="text-green-400">Live Demo</span></h3>
+                        <p class="text-gray-400 mb-6">
+                            Run <span class="font-mono text-green-400">./rungame</span> in the terminal to start playing!
+                            Use <span class="font-mono">W, A, S, D</span> or arrow keys to control the snake.
+                        </p>
+                    </div>
+                    
+                    <div class="game-canvas-container mb-6">
+                        <canvas id="snake-canvas" width="500" height="400"></canvas>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 text-blue-300">Game Controls:</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">W</span> 
+                                <span class="text-gray-400">or</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">↑</span>
+                                <span class="ml-2">Move Up</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">S</span> 
+                                <span class="text-gray-400">or</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">↓</span>
+                                <span class="ml-2">Move Down</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">A</span> 
+                                <span class="text-gray-400">or</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">←</span>
+                                <span class="ml-2">Move Left</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">D</span> 
+                                <span class="text-gray-400">or</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded font-mono">→</span>
+                                <span class="ml-2">Move Right</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-400">
+                            <p><span class="text-green-400">Score:</span> <span id="game-score">0</span></p>
+                            <p><span class="text-yellow-400">High Score:</span> <span id="high-score">0</span></p>
+                            <p><span class="text-red-400">Status:</span> <span id="game-status">Ready to play</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Terminal Command Examples -->
+            <div class="mt-12 bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                <h4 class="text-xl font-bold mb-4">Try these terminal commands:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-gray-900 p-4 rounded-lg">
+                        <div class="font-mono text-green-400 mb-2">./rungame</div>
+                        <p class="text-gray-400 text-sm">Starts the Snake game</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-lg">
+                        <div class="font-mono text-green-400 mb-2">help</div>
+                        <p class="text-gray-400 text-sm">Show all available commands</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-lg">
+                        <div class="font-mono text-green-400 mb-2">clear</div>
+                        <p class="text-gray-400 text-sm">Clear the terminal screen</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-lg">
+                        <div class="font-mono text-green-400 mb-2">skills</div>
+                        <p class="text-gray-400 text-sm">Display technical skills</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-lg">
+                        <div class="font-mono text-green-400 mb-2">ls</div>
+                        <p class="text-gray-400 text-sm">List directory contents</p>
+                    </div>
+                    <div class="bg-gray-900 p-4 rounded-lg">
+                        <div class="font-mono text-green-400 mb-2">whoami</div>
+                        <p class="text-gray-400 text-sm">Show current user</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CONTACT SECTION ==================== -->
+    <section id="contact" class="section-container bg-gray-900">
+        <div class="container max-w-6xl mx-auto">
+            <h2 class="section-title">
+                Get In <span class="text-blue-400">Touch</span>
+            </h2>
+            <p class="section-subtitle">
+                Feel free to reach out for collaborations, opportunities, or just to say hello!
+            </p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Contact Information</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                <span class="text-blue-400 text-xl">✉</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Email</h4>
+                                <p class="text-gray-400">mila.6657.2005@gmail.com</p>
+                                <p class="text-gray-500 text-sm">Typically respond within 24 hours</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                <span class="text-green-400 text-xl">👨‍💻</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">GitHub</h4>
+                                <a href="https://github.com/Demonjokerwarrior" 
+                                   target="_blank" 
+                                   class="text-blue-400 hover:text-blue-300">
+                                    github.com/Demonjokerwarrior
+                                </a>
+                                <p class="text-gray-500 text-sm">View my projects and contributions</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                                <span class="text-purple-400 text-xl">📍</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Location</h4>
+                                <p class="text-gray-400">Cybersecurity Student</p>
+                                <p class="text-gray-500 text-sm">Available for remote opportunities</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 p-6 bg-gray-800/50 rounded-xl">
+                        <h4 class="font-bold mb-4 text-blue-400">What I'm Looking For:</h4>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">•</span>
+                                <span>Cybersecurity Internships</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">•</span>
+                                <span>Security Research Collaborations</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">•</span>
+                                <span>Open Source Security Projects</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-400 mt-1">•</span>
+                                <span>Entry-level Security Positions</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div>
+                    <form id="contact-form" class="space-y-6">
+                        <div>
+                            <label for="name" class="block mb-2 font-semibold">Your Name</label>
+                            <input type="text" id="name" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" placeholder="Enter your name" required>
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2 font-semibold">Your Email</label>
+                            <input type="email" id="email" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" placeholder="Enter your email" required>
+                        </div>
+                        <div>
+                            <label for="subject" class="block mb-2 font-semibold">Subject</label>
+                            <select id="subject" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                <option value="" disabled selected>Select a subject</option>
+                                <option value="collaboration">Project Collaboration</option>
+                                <option value="opportunity">Job Opportunity</option>
+                                <option value="question">Technical Question</option>
+                                <option value="feedback">Portfolio Feedback</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="message" class="block mb-2 font-semibold">Message</label>
+                            <textarea id="message" rows="5" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" placeholder="Type your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg font-semibold transition duration-300 flex items-center justify-center gap-2">
+                            <span>✉</span>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-gray-950 py-8 px-6 border-t border-gray-800">
+        <div class="container max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <div class="flex items-center gap-3 justify-center md:justify-start mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                            <span class="font-bold text-white">M</span>
+                        </div>
+                        <h2 class="text-2xl font-bold">Mila<span class="text-blue-400">.</span></h2>
+                    </div>
+                    <p class="text-gray-500">Cybersecurity Student & Developer</p>
+                </div>
+                
+                <div class="flex flex-wrap gap-6 justify-center">
+                    <a href="#home" class="text-gray-400 hover:text-blue-400 transition duration-300">Home</a>
+                    <a href="#about" class="text-gray-400 hover:text-blue-400 transition duration-300">About</a>
+                    <a href="#skills" class="text-gray-400 hover:text-blue-400 transition duration-300">Skills</a>
+                    <a href="#projects" class="text-gray-400 hover:text-blue-400 transition duration-300">Projects</a>
+                    <a href="#contact" class="text-gray-400 hover:text-blue-400 transition duration-300">Contact</a>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-600">
+                <p>&copy; 2024 Mila. All rights reserved.</p>
+                <p class="text-sm mt-2">Built with passion for cybersecurity and web development</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Terminal elements
+    const terminalOutput = document.getElementById('terminal-output');
+    const currentCommand = document.getElementById('current-command');
+    const commandInput = document.getElementById('command-input');
+    const commandInputLine = document.getElementById('command-input-line');
+
+    // Game elements
+    const gameCanvas = document.getElementById('snake-canvas');
+    const ctx = gameCanvas.getContext('2d');
+    const gameScore = document.getElementById('game-score');
+    const gameStatus = document.getElementById('game-status');
+    const highScore = document.getElementById('high-score');
+
+    let game = null;
+    let score = 0;
+    let highScoreValue = localStorage.getItem('snakeHighScore') || 0;
+    highScore.textContent = highScoreValue;
+
+    initTerminal();
+    initSnakeGame();
+
+    // ==========================
+    // TERMINAL INITIALIZATION
+    // ==========================
+    function initTerminal() {
+        const commands = ["whoami", "ls -la", "cat skills.txt | head -5"];
+        let cmdIndex = 0;
+        let charIndex = 0;
+        let currentCmd = "";
+
+        function typeCommand() {
+            if (cmdIndex < commands.length) {
+                if (charIndex < commands[cmdIndex].length) {
+                    currentCmd += commands[cmdIndex].charAt(charIndex);
+                    currentCommand.textContent = currentCmd;
+                    charIndex++;
+                    setTimeout(typeCommand, 50);
+                } else {
+                    setTimeout(() => {
+                        currentCommand.textContent = "";
+                        currentCmd = "";
+                        charIndex = 0;
+                        cmdIndex++;
+                        setTimeout(typeCommand, 500);
+                    }, 800);
+                }
+            } else {
+                setTimeout(() => {
+                    currentCommand.textContent = "";
+                    commandInputLine.classList.remove('hidden');
+                    commandInput.focus();
+                }, 700);
+            }
+        }
+
+        setTimeout(typeCommand, 500);
+
+        commandInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const cmd = commandInput.value.trim();
+                commandInput.value = "";
+                addTerminalLine(`<span class="command">${cmd}</span>`);
+                processCommand(cmd);
+            }
+        });
+    }
+
+    // Add terminal line
+    function addTerminalLine(content) {
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = `
+            <span class="prompt">mila@portfolio</span>:
+            <span class="directory">~/terminal</span>$ 
+            ${content}
+        `;
+        terminalOutput.appendChild(line);
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
+    // ==========================
+    // TERMINAL COMMAND PROCESSOR
+    // ==========================
+    function processCommand(cmd) {
+        switch (cmd.toLowerCase()) {
+            case './rungame':
+            case 'game':
+            case 'run game':
+                addTerminalLine(`<span class="text-green-400">Starting Snake game...</span>`);
+                startGame();
+                break;
+
+            case 'help':
+                addTerminalLine(`
+                    <div class="text-gray-300">
+                        <br>Available commands:<br>
+                        <span class="text-green-400">./rungame</span> - Start the Snake game<br>
+                        <span class="text-green-400">help</span> - Show help<br>
+                        <span class="text-green-400">clear</span> - Clear screen<br>
+                        <span class="text-green-400">ls</span> - List files<br>
+                        <span class="text-green-400">whoami</span> - User info<br>
+                        <span class="text-green-400">skills</span> - Show skills<br><br>
+                    </div>`);
+                break;
+
+            case 'clear':
+                terminalOutput.innerHTML = "";
+                break;
+
+            case 'ls':
+                addTerminalLine(`
+                    <div class="text-gray-400">
+                        <div>-rwxr-xr-x rungame</div>
+                        <div>-rw-r--r-- skills.txt</div>
+                    </div>
+                `);
+                break;
+
+            case 'skills':
+                addTerminalLine(`
+                    <div class="text-gray-300">
+                        • Python<br>
+                        • Network Security<br>
+                        • Penetration Testing<br>
+                        • Cryptography<br>
+                        • Linux<br>
+                    </div>
+                `);
+                break;
+
+            case 'whoami':
+                addTerminalLine(`<span class="text-green-400">cybersecurity-student</span>`);
+                break;
+
+            default:
+                addTerminalLine(`
+                    <span class="text-red-400">bash: ${cmd}: command not found</span><br>
+                    <span class="text-gray-400">Type 'help' for available commands</span>
+                `);
+        }
+    }
+
+    // ==========================
+    // SNAKE GAME SETUP
+    // ==========================
+    function initSnakeGame() {
+        gameCanvas.width = gameCanvas.parentElement.clientWidth;
+        gameCanvas.height = 400;
+        drawGameGrid();
+        drawStartScreen();
+    }
+
+    function drawGameGrid() {
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+    }
+
+    function drawStartScreen() {
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 30px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Run "./rungame" to play', gameCanvas.width / 2, gameCanvas.height / 2);
+    }
+
+    // ==========================
+    // START THE GAME
+    // ==========================
+    function startGame() {
+        if (game) return;
+
+        score = 0;
+        gameScore.textContent = score;
+        gameStatus.textContent = "Playing";
+        gameStatus.className = "text-green-400";
+
+        game = {
+            snake: [
+                { x: 10, y: 10 },
+                { x: 9, y: 10 },
+                { x: 8, y: 10 }
+            ],
+            direction: { x: 1, y: 0 },
+            food: { x: 15, y: 15 },
+            gridSize: 20,
+            width: gameCanvas.width,
+            height: gameCanvas.height,
+            gameOver: false
+        };
+
+        drawGame();
+        gameLoop();
+        document.addEventListener('keydown', handleGameKeyPress);
+    }
+
+    // ==========================
+    // DRAW GAME OBJECTS
+    // ==========================
+    function drawGame() {
+        drawGameGrid();
+
+        // Draw snake
+        game.snake.forEach((seg, index) => {
+            ctx.fillStyle = index === 0 ? '#10b981' : '#059669';
+            ctx.fillRect(seg.x * game.gridSize, seg.y * game.gridSize, game.gridSize - 1, game.gridSize - 1);
+        });
+
+        // Draw food
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(
+            game.food.x * game.gridSize + game.gridSize / 2,
+            game.food.y * game.gridSize + game.gridSize / 2,
+            game.gridSize / 2 - 2,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+    }
+
+    // ==========================
+    // GAME LOOP
+    // ==========================
+    function gameLoop() {
+        if (!game || game.gameOver) return;
+
+        const head = { ...game.snake[0] };
+        head.x += game.direction.x;
+        head.y += game.direction.y;
+
+        // Wall collision
+        if (
+            head.x < 0 || head.x >= game.width / game.gridSize ||
+            head.y < 0 || head.y >= game.height / game.gridSize
+        ) {
+            gameOver();
+            return;
+        }
+
+        // Self collision
+        if (game.snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+            gameOver();
+            return;
+        }
+
+        game.snake.unshift(head);
+
+        // Food collision
+        if (head.x === game.food.x && head.y === game.food.y) {
+            score += 10;
+            gameScore.textContent = score;
+
+            game.food = {
+                x: Math.floor(Math.random() * (game.width / game.gridSize)),
+                y: Math.floor(Math.random() * (game.height / game.gridSize))
+            };
+        } else {
+            game.snake.pop();
+        }
+
+        drawGame();
+        setTimeout(gameLoop, 140);
+    }
+
+    // ==========================
+    // HANDLE KEYBOARD INPUT
+    // ==========================
+    function handleGameKeyPress(e) {
+        const key = e.key.toLowerCase();
+
+        if (key === "w" || key === "arrowup") game.direction = { x: 0, y: -1 };
+        if (key === "s" || key === "arrowdown") game.direction = { x: 0, y: 1 };
+        if (key === "a" || key === "arrowleft") game.direction = { x: -1, y: 0 };
+        if (key === "d" || key === "arrowright") game.direction = { x: 1, y: 0 };
+    }
+
+    // ==========================
+    // GAME OVER
+    // ==========================
+    function gameOver() {
+        game.gameOver = true;
+        gameStatus.textContent = "Game Over";
+        gameStatus.className = "text-red-400";
+
+        if (score > highScoreValue) {
+            highScoreValue = score;
+            highScore.textContent = highScoreValue;
+            localStorage.setItem("snakeHighScore", highScoreValue);
+            addTerminalLine(`<span class="text-yellow-400">New High Score: ${highScoreValue}!</span>`);
+        }
+
+        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 32px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', gameCanvas.width / 2, gameCanvas.height / 2 - 30);
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillText(`Score: ${score}`, gameCanvas.width / 2, gameCanvas.height / 2 + 10);
+        ctx.fillText(`High Score: ${highScoreValue}`, gameCanvas.width / 2, gameCanvas.height / 2 + 40);
+
+        game = null;
+    }
+
+    // ==========================
+    // WINDOW RESIZE
+    // ==========================
+    window.addEventListener("resize", function () {
+        gameCanvas.width = gameCanvas.parentElement.clientWidth;
+
+        if (game && !game.gameOver) {
+            game.width = gameCanvas.width;
+            drawGame();
+        } else {
+            drawGameGrid();
+            drawStartScreen();
+        }
+    });
+
+    // ==========================
+    // CONTACT FORM
+    // ==========================
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+
+        alert(`Thank you, ${name}! Your message has been sent. I will contact you at ${email}.`);
+
+        this.reset();
+    });
+
+});
+    </script>
+</body>
+</html>
